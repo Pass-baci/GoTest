@@ -1,0 +1,14 @@
+Go语言中的测试依赖go test命令，不会被go build编译到最终的可执行文件中
+测试类型主要有：
+1.测试函数（函数名前缀为Test）：测试程序的一些逻辑行为是否正确
+    执行方法：go test
+2.基准函数（函数名前缀为Benchmark）：测试函数的性能
+    执行方法：go test -bench=“函数名”
+    -benchmem可以查看内存分配的统计数据
+3.示例函数（函数前缀名为Example）：为文档提供示例文档
+4.子测试，使用t.Run()执行子测试
+5.go test -v -run=Split/simple只会运行simple对应的子测试用例。
+6.go test -cover来查看测试覆盖率
+7.go test -cover -coverprofile="filename" 用来将覆盖率相关的记录信息输出到一个文件
+8.go tool cover -html="filename" 处理生成的记录信息,在本地的浏览器窗口生成一个HTML报告
+
