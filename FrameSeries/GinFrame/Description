@@ -1,0 +1,44 @@
+1.Gin 的路由(Gin.Defalut())支持 GET , POST , PUT , DELETE , PATCH , HEAD , OPTIONS 请求
+       Gin.Defalut()生成的路由，默认使用两个中间件（Logger(), Recovery()）
+       Logger():对日志进行记录
+       Recovery():对有 painc时, 进行 500 的错误处理
+2.路由分组（*gin.Engine.Group()），根据版本号，或者根据功能权限的不同进行分组
+3.Gin.H{}可以简化生成 json 的方式，实际上是：type H map[string]interface{}
+4.Gin支持表单数据：
+    4.1 PostForm直接接受参数
+    4.2 DefaultPostForm 可以设置一个默认值，如果前端没有进行传值，那么我们可以设置默认值
+  示例：
+  func UserRegister(c *gin.Context) {
+  	email := c.PostForm("email")
+  	password := c.DefaultPostForm("password", "Wa123456")
+  	passwordAgain := c.DefaultPostForm("password-again", "Wa123456")
+  	println("email", email, "password", password, "password again", passwordAgain)
+  }
+    4.3 模型绑定（form）
+  示例：
+  type UserModel struct {
+  	Email         string `form:"email"`
+  	Password      string `form:"password"`
+  	PasswordAgain string `form:"password-again"`
+  }
+    4.4 数据校验（binding）
+  示例：
+  type UserModel struct {
+  	Email         string `form:"email" binding:"email"`
+  	Password      string `form:"password"`
+  	PasswordAgain string `form:"password-again" binding:"eqfield=Password"`
+  }
+5.中间件：类似于拦截器，中间件需要返回 gin.HandlerFunc 函数，所以定义返回函数
+    全局中间件：使用router.Use()
+    局部中间件：在路由组中或者在某个请求中加入中间件。
+
+6.Swagger 是一个 API 生成工具，可以生成文档。 Swagger 是通过编写 yaml 和 json 来实现文档化。并且可以进行测试等工作。
+    go get -u github.com/swaggo/swag/cmd/swag
+    初始化文档目录：swag init
+
+7.JWT：全称叫做 JSON WEB TOKEN，JWT 是由三段构成的。分别是 HEADER，PAYLOAD，VERIFY SIGNATURE，它们生成的信息通过 . 分割。
+    HEADER：是由 一个 typ 和 alg 组成，typ 会指明为 JWT，而 alg 是所使用的加密算法
+    PAYLOAD：JWT的载体，勿存放敏感数据
+    VERIFY SIGNATURE: header 里指定的加密算法对上部分进行加密，同时我们还要插入我们的一个密钥
+  JWT 登录原理:当用户登录的时候，服务器校验登录名称和密码是否正确，正确的话，会生成 JWT 返回给客户端。客户端获取到 JWT 后要进行保存，之后的每次请求都会讲 JWT 携带在头部，每次服务器都会获取头部的 JWT 是否正确，如果正确则正确执行该请求，否者验证失败，重新登录.
+
